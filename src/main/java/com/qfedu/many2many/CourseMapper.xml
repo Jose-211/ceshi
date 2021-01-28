@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qfedu.many2many.CourseDao">
+    <resultMap id="couMap" type="com.qfedu.many2many.Course">
+        <id column="cid" property="cid"></id>
+        <result column="cname" property="cname"></result>
+        <collection property="stuList" javaType="list" ofType="com.qfedu.many2many.Student">
+            <id column="sid" property="sid"></id>
+            <result column="sname" property="sname"></result>
+        </collection>
+
+    </resultMap>
+    <resultMap id="couMap2" type="com.qfedu.many2many.Course">
+        <id column="cid" property="cid"></id>
+        <result column="cname" property="cname"></result>
+        <collection property="stuList" javaType="list" ofType="com.qfedu.many2many.Student" column="cid"
+        select="com.qfedu.many2many.StudentDao.findByCid">
+
+        </collection>
+    </resultMap>
+    <select id="findBySid" parameterType="int" resultType="com.qfedu.many2many.Course">
+        SELECT c.* FROM t_relation tr
+         INNER JOIN t_course c
+         ON tr.cid = c.cid
+         WHERE tr.sid = #{sid}
+    </select>
+    <select id="findCid" parameterType="int" resultMap="couMap">
+        select s.*,c.* from t_student s join t_relation tr on s.sid=tr.sid join t_course c on tr.cid=c.cid where c.cid=#{cid}
+    </select>
+    <select id="findCid1" resultMap="couMap2" resultType="com.qfedu.many2many.Course">
+        select * from t_course where cid=#{cid}
+    </select>
+
+</mapper>
